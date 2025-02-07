@@ -8,5 +8,6 @@
         android:title="Ordenar por amorosidad" />
     <item
         android:id="@+id/action_show_favorites"
-        android:title="Ver solo favoritos" />
+        android:title="Ver solo favoritos"
+        android:checkable="true"/>
 </menu>
