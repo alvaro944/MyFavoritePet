@@ -5,13 +5,15 @@
     android:orientation="horizontal"
     android:padding="8dp">
 
+    <!-- Imagen de la mascota -->
     <ImageView
         android:id="@+id/ivPetImage"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:scaleType="centerCrop"
         android:layout_marginEnd="8dp" />
 
+    <!-- Contenedor de información -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -39,24 +41,46 @@
             android:layout_height="wrap_content"
             android:numStars="5"
             android:stepSize="1.0"
-            android:isIndicator="true"/>
+            android:isIndicator="true"
+            android:scaleX="0.9"
+            android:scaleY="0.9"/>
     </LinearLayout>
 
-    <!-- Botón de favorito -->
-    <ImageView
-        android:id="@+id/btnFavoritePet"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@android:drawable/btn_star_big_off"
-        android:contentDescription="Marcar como favorito"
-        android:padding="4dp"/>
+    <!-- Contenedor de botones -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
 
-    <!-- Botón de eliminar -->
-    <ImageView
-        android:id="@+id/btnDeletePet"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@android:drawable/ic_delete"
-        android:contentDescription="Eliminar mascota"
-        android:padding="4dp"/>
+        <!-- Botón para abrir Wikipedia -->
+        <ImageView
+            android:id="@+id/btnOpenWiki"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:contentDescription="Abrir enlace de Wikipedia"
+            android:padding="4dp"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Botón de favorito -->
+        <ImageView
+            android:id="@+id/btnFavoritePet"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/btn_star_big_off"
+            android:contentDescription="Marcar como favorito"
+            android:padding="4dp"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Botón de eliminar -->
+        <ImageView
+            android:id="@+id/btnDeletePet"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_delete"
+            android:contentDescription="Eliminar mascota"
+            android:padding="4dp"/>
+    </LinearLayout>
+
 </LinearLayout>

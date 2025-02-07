@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 class MainActivity : AppCompatActivity() {
 
     private val petList = mutableListOf<Pet>()
-    private val allPets = mutableListOf<Pet>() // Lista completa sin filtrar
     private lateinit var petAdapter: PetAdapter
-    private var showOnlyFavorites = false // Estado del filtro
 
     private val addEditPetLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -24,13 +22,14 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val newPet = result.data?.getSerializableExtra("NEW_PET") as? Pet
             newPet?.let { pet ->
-                val existingPetIndex = allPets.indexOfFirst { it.id == pet.id }
+                val existingPetIndex = petList.indexOfFirst { it.id == pet.id }
                 if (existingPetIndex != -1) {
-                    allPets[existingPetIndex] = pet
+                    petList[existingPetIndex] = pet
+                    petAdapter.notifyItemChanged(existingPetIndex)
                 } else {
-                    allPets.add(pet)
+                    petList.add(pet)
+                    petAdapter.notifyItemInserted(petList.size - 1)
                 }
-                applyFilter()
             }
         }
     }
@@ -39,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Establecer Toolbar como ActionBar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -60,61 +58,25 @@ class MainActivity : AppCompatActivity() {
         rvPets.layoutManager = LinearLayoutManager(this)
         rvPets.adapter = petAdapter
 
-        // Botón flotante para añadir mascota
         fabAddPet.setOnClickListener {
             val intent = Intent(this, AddEditPetActivity::class.java)
             addEditPetLauncher.launch(intent)
         }
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_sort_by_name -> {
-                allPets.sortBy { it.name }
-                applyFilter()
-                true
-            }
-            R.id.action_sort_by_love_level -> {
-                allPets.sortByDescending { it.loveLevel }
-                applyFilter()
-                true
-            }
-            R.id.action_show_favorites -> {
-                showOnlyFavorites = !showOnlyFavorites
-                item.isChecked = showOnlyFavorites
-                applyFilter()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun applyFilter() {
-        petList.clear()
-        if (showOnlyFavorites) {
-            petList.addAll(allPets.filter { it.isFavorite })
-        } else {
-            petList.addAll(allPets)
-        }
-        petAdapter.notifyDataSetChanged()
-    }
-
     private fun removePet(pet: Pet) {
-        allPets.remove(pet)
-        applyFilter()
+        val position = petList.indexOf(pet)
+        if (position != -1) {
+            petList.removeAt(position)
+            petAdapter.notifyItemRemoved(position)
+        }
     }
 
     private fun toggleFavorite(pet: Pet) {
-        val index = allPets.indexOfFirst { it.id == pet.id }
+        val index = petList.indexOfFirst { it.id == pet.id }
         if (index != -1) {
-            allPets[index].isFavorite = !allPets[index].isFavorite
-            applyFilter()
+            petList[index].isFavorite = !petList[index].isFavorite
+            petAdapter.notifyItemChanged(index)
         }
     }
 }

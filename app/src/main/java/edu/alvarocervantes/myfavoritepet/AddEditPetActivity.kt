@@ -1,18 +1,33 @@
 package edu.alvarocervantes.myfavoritepet
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AddEditPetActivity : AppCompatActivity() {
     private var selectedImageUri: Uri? = null
-    private var petId: Int? = null // ID de la mascota si se está editando
+    private var photoFile: File? = null
+    private lateinit var ivPetImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,57 +40,118 @@ class AddEditPetActivity : AppCompatActivity() {
         val etWikiLink = findViewById<EditText>(R.id.etWikiLink)
         val rbLoveLevel = findViewById<RatingBar>(R.id.rbLoveLevel)
         val btnAddImage = findViewById<Button>(R.id.btnAddImage)
+        val btnTakePhoto = findViewById<Button>(R.id.btnTakePhoto)
         val btnSave = findViewById<Button>(R.id.btnSave)
-
-        // Verificar si estamos en modo edición
-        val pet = intent.getSerializableExtra("EDIT_PET") as? Pet
-        pet?.let {
-            petId = it.id
-            etName.setText(it.name)
-            etScientificName.setText(it.scientificName)
-            etFurType.setText(it.furType)
-            etCategory.setText(it.category)
-            etWikiLink.setText(it.wikiLink)
-            rbLoveLevel.rating = it.loveLevel.toFloat()
-            selectedImageUri = it.imageUri?.let { uri -> Uri.parse(uri) }
-        }
+        ivPetImage = findViewById(R.id.ivPetImage)
 
         btnAddImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
-            startActivityForResult(intent, 100)
+            startActivityForResult(intent, REQUEST_GALLERY)
+        }
+
+        btnTakePhoto.setOnClickListener {
+            checkCameraPermissionAndOpenCamera()
         }
 
         btnSave.setOnClickListener {
-            // Validar que los campos no estén vacíos
-            if (etName.text.isEmpty() || etCategory.text.isEmpty()) {
-                Toast.makeText(this, "Nombre y categoría son obligatorios", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val newPet = Pet(
-                id = petId ?: (0..1000000).random(),
-                name = etName.text.toString(),
-                scientificName = etScientificName.text.toString(),
-                furType = etFurType.text.toString(),
-                category = etCategory.text.toString(),
-                imageUri = selectedImageUri?.toString(),
-                loveLevel = rbLoveLevel.rating.toInt(),
-                wikiLink = etWikiLink.text.toString()
-            )
-
-            val resultIntent = Intent().apply {
-                putExtra("NEW_PET", newPet)
-            }
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
+            savePet(etName, etScientificName, etFurType, etCategory, etWikiLink, rbLoveLevel)
         }
+    }
+
+    private fun checkCameraPermissionAndOpenCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            takePhoto()
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+        }
+    }
+
+    private fun takePhoto() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        photoFile = createImageFile()
+
+        photoFile?.let {
+            val photoURI = FileProvider.getUriForFile(
+                this,
+                "edu.alvarocervantes.myfavoritepet.fileprovider",
+                it
+            )
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+        }
+    }
+
+    private fun createImageFile(): File {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("PET_$timeStamp", ".jpg", storageDir).apply {
+            selectedImageUri = Uri.fromFile(this) // Asegurar que la imagen capturada se guarde
+        }
+    }
+
+    private fun savePet(
+        etName: EditText,
+        etScientificName: EditText,
+        etFurType: EditText,
+        etCategory: EditText,
+        etWikiLink: EditText,
+        rbLoveLevel: RatingBar
+    ) {
+        if (etName.text.isEmpty() || etCategory.text.isEmpty()) {
+            Toast.makeText(this, "Nombre y categoría son obligatorios", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val newPet = Pet(
+            id = (0..1000000).random(),
+            name = etName.text.toString(),
+            scientificName = etScientificName.text.toString(),
+            furType = etFurType.text.toString(),
+            category = etCategory.text.toString(),
+            imageUri = selectedImageUri?.toString(), // Guardar la imagen capturada o seleccionada
+            loveLevel = rbLoveLevel.rating.toInt(),
+            wikiLink = etWikiLink.text.toString()
+        )
+
+        val resultIntent = Intent().apply {
+            putExtra("NEW_PET", newPet)
+        }
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            selectedImageUri = data?.data
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_GALLERY -> {
+                    selectedImageUri = data?.data
+                    ivPetImage.setImageURI(selectedImageUri)
+                }
+                REQUEST_IMAGE_CAPTURE -> {
+                    selectedImageUri = Uri.fromFile(photoFile)
+                    val bitmap = BitmapFactory.decodeFile(photoFile?.absolutePath)
+                    ivPetImage.setImageBitmap(bitmap)
+                }
+            }
         }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePhoto()
+            } else {
+                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    companion object {
+        private const val REQUEST_CAMERA_PERMISSION = 200
+        private const val REQUEST_IMAGE_CAPTURE = 101
+        private const val REQUEST_GALLERY = 100
     }
 }

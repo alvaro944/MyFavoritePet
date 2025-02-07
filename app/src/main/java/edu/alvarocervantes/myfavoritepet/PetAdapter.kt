@@ -1,5 +1,8 @@
 package edu.alvarocervantes.myfavoritepet
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,19 +26,30 @@ class PetAdapter(
         val rbLoveLevel: RatingBar = view.findViewById(R.id.rbLoveLevel)
         val btnDeletePet: ImageView = view.findViewById(R.id.btnDeletePet)
         val btnFavoritePet: ImageView = view.findViewById(R.id.btnFavoritePet)
+        val btnOpenWiki: ImageView = view.findViewById(R.id.btnOpenWiki)
 
         init {
             view.setOnClickListener {
-                onPetClick(petList[adapterPosition])
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION && position < petList.size) {
+                    onPetClick(petList[position])
+                }
             }
 
             btnDeletePet.setOnClickListener {
-                onDeleteClick(petList[adapterPosition])
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION && position < petList.size) {
+                    onDeleteClick(petList[position])
+                    notifyItemRemoved(position)
+                }
             }
 
             btnFavoritePet.setOnClickListener {
-                onFavoriteClick(petList[adapterPosition])
-                notifyItemChanged(adapterPosition) // Actualiza la UI después del cambio
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION && position < petList.size) {
+                    onFavoriteClick(petList[position])
+                    notifyItemChanged(position)
+                }
             }
         }
     }
@@ -50,25 +64,16 @@ class PetAdapter(
         val pet = petList[position]
         holder.tvPetName.text = pet.name
         holder.tvPetCategory.text = pet.category
-        holder.rbLoveLevel.rating = pet.loveLevel.toFloat()
+        holder.rbLoveLevel.rating = pet.loveLevel.coerceIn(1, 5).toFloat()
 
         Glide.with(holder.itemView.context)
             .load(pet.imageUri)
             .placeholder(R.drawable.placeholder_image)
             .into(holder.ivPetImage)
 
-        // Actualizar estado del favorito
         val favoriteIcon = if (pet.isFavorite) android.R.drawable.btn_star_big_on else android.R.drawable.btn_star_big_off
         holder.btnFavoritePet.setImageResource(favoriteIcon)
     }
 
     override fun getItemCount(): Int = petList.size
-
-    fun removePet(pet: Pet) {
-        val position = petList.indexOf(pet)
-        if (position != -1) {
-            petList.removeAt(position)
-            notifyItemRemoved(position)
-        }
-    }
 }
