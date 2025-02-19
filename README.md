@@ -91,18 +91,4 @@ Este proyecto es de código abierto y puedes modificarlo libremente.
 ---
 
 ## 💡 **Créditos**
-Desarrollado por **@TuNombre** como parte del proyecto de **PMDM en DAM**. 🎓  
-```
-
----
-
-### 📌 **¿Cómo usarlo?**
-1. **Crea un archivo `README.md`** en la raíz de tu proyecto.  
-2. **Copia y pega el contenido del archivo arriba.**  
-3. **Si quieres, añade capturas de pantalla en la sección correspondiente.**  
-4. **Guarda y súbelo a tu repositorio.**  
-
----
-
-🔥 **¡Con esto, tu proyecto ya está documentado profesionalmente! 🚀**  
-Si necesitas algún ajuste o quieres personalizar más la descripción, dime y lo ajustamos. 😊
+Desarrollado por **Álvaro Cervantes** como parte del proyecto de **PMDM en DAM**. 🎓  
