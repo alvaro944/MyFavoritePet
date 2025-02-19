@@ -1,5 +1,3 @@
-### 📄 **README.md**
-
 # 🐾 MyFavouritesPets
 
 **MyFavouritesPets** es una aplicación móvil en **Kotlin** que permite gestionar una lista de mascotas favoritas, almacenando información como su nombre, categoría, imagen y nivel de "amorosidad". Además, ofrece funcionalidades de persistencia con **SQLite**, ordenación, filtrado de favoritos y edición de datos.
