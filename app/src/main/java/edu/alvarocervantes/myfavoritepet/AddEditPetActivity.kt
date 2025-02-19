@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -25,6 +24,8 @@ import java.util.Date
 import java.util.Locale
 
 class AddEditPetActivity : AppCompatActivity() {
+
+    private var petToEdit: Pet? = null
     private var selectedImageUri: Uri? = null
     private var photoFile: File? = null
     private lateinit var ivPetImage: ImageView
@@ -44,6 +45,23 @@ class AddEditPetActivity : AppCompatActivity() {
         val btnSave = findViewById<Button>(R.id.btnSave)
         ivPetImage = findViewById(R.id.ivPetImage)
 
+        // Recibir la mascota si estamos en modo edición
+        petToEdit = intent.getSerializableExtra("EDIT_PET") as? Pet
+        if (petToEdit != null) {
+            etName.setText(petToEdit!!.name)
+            etScientificName.setText(petToEdit!!.scientificName)
+            etFurType.setText(petToEdit!!.furType)
+            etCategory.setText(petToEdit!!.category)
+            etWikiLink.setText(petToEdit!!.wikiLink)
+            rbLoveLevel.rating = petToEdit!!.loveLevel.toFloat()
+
+            // Restaurar la imagen si ya tenía una
+            if (!petToEdit!!.imageUri.isNullOrEmpty()) {
+                selectedImageUri = Uri.parse(petToEdit!!.imageUri)
+                ivPetImage.setImageURI(selectedImageUri)
+            }
+        }
+
         btnAddImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
@@ -55,7 +73,28 @@ class AddEditPetActivity : AppCompatActivity() {
         }
 
         btnSave.setOnClickListener {
-            savePet(etName, etScientificName, etFurType, etCategory, etWikiLink, rbLoveLevel)
+            if (etName.text.isEmpty() || etCategory.text.isEmpty()) {
+                Toast.makeText(this, "Nombre y categoría son obligatorios", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val updatedPet = Pet(
+                id = petToEdit?.id ?: (0..1000000).random(),
+                name = etName.text.toString(),
+                scientificName = etScientificName.text.toString(),
+                furType = etFurType.text.toString(),
+                category = etCategory.text.toString(),
+                imageUri = selectedImageUri?.toString() ?: petToEdit?.imageUri,
+                loveLevel = rbLoveLevel.rating.toInt(),
+                isFavorite = petToEdit?.isFavorite ?: false,
+                wikiLink = etWikiLink.text.toString()
+            )
+
+            val resultIntent = Intent().apply {
+                putExtra("NEW_PET", updatedPet)
+            }
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
     }
 
@@ -86,39 +125,8 @@ class AddEditPetActivity : AppCompatActivity() {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("PET_$timeStamp", ".jpg", storageDir).apply {
-            selectedImageUri = Uri.fromFile(this) // Asegurar que la imagen capturada se guarde
+            selectedImageUri = Uri.fromFile(this)
         }
-    }
-
-    private fun savePet(
-        etName: EditText,
-        etScientificName: EditText,
-        etFurType: EditText,
-        etCategory: EditText,
-        etWikiLink: EditText,
-        rbLoveLevel: RatingBar
-    ) {
-        if (etName.text.isEmpty() || etCategory.text.isEmpty()) {
-            Toast.makeText(this, "Nombre y categoría son obligatorios", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val newPet = Pet(
-            id = (0..1000000).random(),
-            name = etName.text.toString(),
-            scientificName = etScientificName.text.toString(),
-            furType = etFurType.text.toString(),
-            category = etCategory.text.toString(),
-            imageUri = selectedImageUri?.toString(), // Guardar la imagen capturada o seleccionada
-            loveLevel = rbLoveLevel.rating.toInt(),
-            wikiLink = etWikiLink.text.toString()
-        )
-
-        val resultIntent = Intent().apply {
-            putExtra("NEW_PET", newPet)
-        }
-        setResult(Activity.RESULT_OK, resultIntent)
-        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/action_sort_by_name"
-        android:title="Ordenar por nombre" />
+        android:id="@+id/action_sort_name"
+        android:title="Ordenar por Nombre (A-Z)"
+        app:showAsAction="never" />
+
     <item
-        android:id="@+id/action_sort_by_love_level"
-        android:title="Ordenar por amorosidad" />
+        android:id="@+id/action_sort_name_desc"
+        android:title="Ordenar por Nombre (Z-A)"
+        app:showAsAction="never" />
+
     <item
-        android:id="@+id/action_show_favorites"
-        android:title="Ver solo favoritos"
-        android:checkable="true"/>
+        android:id="@+id/action_sort_love"
+        android:title="Ordenar por Amorosidad"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_filter_favorites"
+        android:title="Mostrar Solo Favoritos"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_show_all"
+        android:title="Mostrar Todas"
+        app:showAsAction="never" />
+
 </menu>

@@ -75,5 +75,13 @@ class PetAdapter(
         holder.btnFavoritePet.setImageResource(favoriteIcon)
     }
 
+    fun updateList(newList: List<Pet>) {
+        petList.clear()
+        petList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+
+
     override fun getItemCount(): Int = petList.size
 }
