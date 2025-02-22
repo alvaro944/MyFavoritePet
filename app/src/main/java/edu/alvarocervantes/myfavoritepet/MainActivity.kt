@@ -1,6 +1,7 @@
 package edu.alvarocervantes.myfavoritepet
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,7 +12,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import edu.alvarocervantes.myfavoritepet.adapters.PetAdapter
 import edu.alvarocervantes.myfavoritepet.data.PetDatabaseHelper
+import edu.alvarocervantes.myfavoritepet.model.Pet
+import edu.alvarocervantes.myfavoritepet.utils.FirebaseBackupHelper
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,6 +73,13 @@ class MainActivity : AppCompatActivity() {
             removePet(pet)
         }, { pet ->
             toggleFavorite(pet)
+        }, { wikiLink -> // 🔥 Nuevo parámetro para manejar el botón de Info
+            if (wikiLink.isNotEmpty()) {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink))
+                startActivity(browserIntent)
+            } else {
+                Toast.makeText(this, "No hay enlace disponible", Toast.LENGTH_SHORT).show()
+            }
         })
 
         rvPets.layoutManager = LinearLayoutManager(this)
@@ -112,6 +123,47 @@ class MainActivity : AppCompatActivity() {
                 petList.addAll(originalPetList) // Restaurar desde la lista original
                 petAdapter.notifyDataSetChanged()
             }
+            R.id.action_backup_firebase -> {
+                FirebaseBackupHelper.backupPets(originalPetList,
+                    onSuccess = {
+                        Toast.makeText(this, "Backup exitoso en Firebase", Toast.LENGTH_SHORT).show()
+                    },
+                    onFailure = { e ->
+                        Toast.makeText(this, "Error en backup: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                )
+            }
+            R.id.action_restore_firebase -> {
+                FirebaseBackupHelper.getLatestBackupCollection(
+                    onSuccess = { latestCollection ->
+                        FirebaseBackupHelper.restorePets(latestCollection,
+                            onSuccess = { pets ->
+                                var added = 0
+                                pets.forEach { pet ->
+                                    if (!originalPetList.any { it.id == pet.id }) { // Evitar duplicados
+                                        dbHelper.insertPet(pet) // 🔥 Guardamos en SQLite
+                                        originalPetList.add(pet) // 🔥 Actualizamos lista original
+                                        petList.add(pet) // 🔥 Mostramos en UI
+                                        added++
+                                    }
+                                }
+                                petAdapter.notifyDataSetChanged() // 🔥 Refrescar UI
+                                if (added > 0) {
+                                    Toast.makeText(this, "Restauración completada: $added elementos añadidos.", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this, "No se añadieron elementos (posible duplicado).", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            onFailure = { e ->
+                                Toast.makeText(this, "Error al restaurar: ${e.message}", Toast.LENGTH_LONG).show()
+                            }
+                        )
+                    },
+                    onFailure = { e ->
+                        Toast.makeText(this, "No se encontró un backup en Firebase.", Toast.LENGTH_LONG).show()
+                    }
+                )
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -140,20 +192,15 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-
     private fun toggleFavorite(pet: Pet) {
         val index = originalPetList.indexOfFirst { it.id == pet.id }
         if (index != -1) {
             originalPetList[index].isFavorite = !originalPetList[index].isFavorite
-
-            // Si está en la lista actual, actualizar su estado también
             val visibleIndex = petList.indexOfFirst { it.id == pet.id }
             if (visibleIndex != -1) {
                 petList[visibleIndex].isFavorite = originalPetList[index].isFavorite
                 petAdapter.notifyItemChanged(visibleIndex)
             }
-
-            // Guardar cambios en la base de datos
             dbHelper.updatePet(originalPetList[index])
         }
     }

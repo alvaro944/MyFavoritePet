@@ -27,4 +27,14 @@
         android:title="Mostrar Todas"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_backup_firebase"
+        android:title="Backup en Firebase"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_restore_firebase"
+        android:title="Restaurar desde Firebase"
+        app:showAsAction="never" />
+
 </menu>

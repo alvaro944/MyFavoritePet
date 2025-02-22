@@ -1,6 +1,5 @@
-package edu.alvarocervantes.myfavoritepet
+package edu.alvarocervantes.myfavoritepet.adapters
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
@@ -9,14 +8,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import android.util.Patterns
+import edu.alvarocervantes.myfavoritepet.R
+import edu.alvarocervantes.myfavoritepet.model.Pet
 
 class PetAdapter(
     private val petList: MutableList<Pet>,
     private val onPetClick: (Pet) -> Unit,
     private val onDeleteClick: (Pet) -> Unit,
-    private val onFavoriteClick: (Pet) -> Unit
+    private val onFavoriteClick: (Pet) -> Unit,
+    private val onInfoClick: (String) -> Unit // 🔥 Nueva función para manejar el botón de Info
 ) : RecyclerView.Adapter<PetAdapter.PetViewHolder>() {
 
     inner class PetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -51,6 +55,25 @@ class PetAdapter(
                     notifyItemChanged(position)
                 }
             }
+
+            btnOpenWiki.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION && position < petList.size) {
+                    val pet = petList[position]
+                    val wikiLink = pet.wikiLink.trim()
+
+                    if (wikiLink.isNotEmpty() && Patterns.WEB_URL.matcher(wikiLink).matches()) {
+                        try {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink))
+                            itemView.context.startActivity(browserIntent)
+                        } catch (e: Exception) {
+                            Toast.makeText(itemView.context, "No se pudo abrir el enlace", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(itemView.context, "El enlace no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 
@@ -80,8 +103,6 @@ class PetAdapter(
         petList.addAll(newList)
         notifyDataSetChanged()
     }
-
-
 
     override fun getItemCount(): Int = petList.size
 }

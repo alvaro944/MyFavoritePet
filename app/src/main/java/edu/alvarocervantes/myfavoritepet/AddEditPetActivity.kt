@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import edu.alvarocervantes.myfavoritepet.model.Pet
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
