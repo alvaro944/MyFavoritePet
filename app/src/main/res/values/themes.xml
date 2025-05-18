@@ -1,8 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.MyFavoritePet" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Colores personalizados -->
+        <item name="colorPrimary">@color/title_color</item>
+        <item name="colorPrimaryVariant">@color/subtitle_color</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="android:colorBackground">@color/background_color</item>
+        <item name="colorSurface">@color/card_background_color</item>
+
+        <item name="colorSecondary">@color/button_color</item>
+        <item name="colorOnSecondary">@color/white</item>
     </style>
 
     <style name="Theme.MyFavoritePet" parent="Base.Theme.MyFavoritePet" />

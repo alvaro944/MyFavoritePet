@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="background_color">#e8f5e9</color> <!-- Verde muy claro -->
+    <color name="title_color">#2e7d32</color> <!-- Verde oscuro para títulos -->
+    <color name="subtitle_color">#4e944f</color> <!-- Verde intermedio para subtítulos -->
+    <color name="card_background_color">#f5f5f5</color> <!-- Fondo casi blanco para las tarjetas -->
+    <color name="button_color">#d7c4a3</color> <!-- Beige para botones -->
+    <color name="white">#FFFFFF</color> <!-- Blanco puro -->
+    <color name="black">#000000</color> <!-- Negro puro -->
 </resources>

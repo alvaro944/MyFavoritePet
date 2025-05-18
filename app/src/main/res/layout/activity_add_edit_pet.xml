@@ -3,8 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/background_color">
 
+    <!-- Imagen de la mascota -->
     <ImageView
         android:id="@+id/ivPetImage"
         android:layout_width="150dp"
@@ -13,36 +15,42 @@
         android:layout_gravity="center"
         android:src="@android:drawable/ic_menu_gallery" />
 
+    <!-- Nombre -->
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nombre" />
 
+    <!-- Nombre científico -->
     <EditText
         android:id="@+id/etScientificName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nombre Científico" />
 
+    <!-- Tipo de pelaje -->
     <EditText
         android:id="@+id/etFurType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Tipo de Pelaje" />
 
+    <!-- Categoría -->
     <EditText
         android:id="@+id/etCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Categoría (mamífero, ave, etc.)" />
 
+    <!-- Enlace a Wikipedia -->
     <EditText
         android:id="@+id/etWikiLink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enlace a Wikipedia" />
 
+    <!-- Nivel de amorosidad -->
     <RatingBar
         android:id="@+id/rbLoveLevel"
         android:layout_width="wrap_content"
@@ -50,21 +58,28 @@
         android:numStars="5"
         android:stepSize="1.0" />
 
+    <!-- Botones -->
     <Button
         android:id="@+id/btnAddImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_color"
+        android:textColor="@color/white"
         android:text="Seleccionar Imagen de Galería" />
 
     <Button
         android:id="@+id/btnTakePhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_color"
+        android:textColor="@color/white"
         android:text="Tomar Foto" />
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/button_color"
+        android:textColor="@color/white"
         android:text="Guardar Mascota" />
 </LinearLayout>
