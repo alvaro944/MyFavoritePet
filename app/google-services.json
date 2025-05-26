@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "917489993636",
-    "project_id": "myfavouritespets-777d2",
-    "storage_bucket": "myfavouritespets-777d2.firebasestorage.app"
+    "project_number": "215775318005",
+    "project_id": "myfavoritepet",
+    "storage_bucket": "myfavoritepet.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:917489993636:android:4a4f2d653cfaca2dc4e331",
+        "mobilesdk_app_id": "1:215775318005:android:bc39a97736b47b1fcbdabc",
         "android_client_info": {
           "package_name": "edu.alvarocervantes.myfavoritepet"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBh9fVI7oTQ6vI_hvWf6nyY8CvrBJt-r7g"
+          "current_key": "AIzaSyA8fjaTbnraNIGg7qT240vubs2YoL-YVxE"
         }
       ],
       "services": {

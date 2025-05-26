@@ -26,7 +26,7 @@ object FirebaseBackupHelper {
             batch.set(docRef, pet)
         }
 
-        val backupRef = db.collection("MyFavouritesPets-Backups").document("latest")
+        val backupRef = db.collection("MyFavouritesPet-Backups").document("latest")
         val backupData = hashMapOf("collectionName" to collectionName, "timestamp" to timestamp)
 
         batch.commit()
@@ -39,7 +39,7 @@ object FirebaseBackupHelper {
     }
 
     fun getLatestBackupCollection(onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("MyFavouritesPets-Backups")
+        db.collection("MyFavouritesPet-Backups")
             .document("latest")
             .get()
             .addOnSuccessListener { document ->

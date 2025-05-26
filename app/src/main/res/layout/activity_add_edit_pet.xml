@@ -20,35 +20,45 @@
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre" />
+        android:hint="Nombre"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black" />
 
     <!-- Nombre científico -->
     <EditText
         android:id="@+id/etScientificName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre Científico" />
+        android:hint="Nombre Científico"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black" />
 
     <!-- Tipo de pelaje -->
     <EditText
         android:id="@+id/etFurType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tipo de Pelaje" />
+        android:hint="Tipo de Pelaje"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black" />
 
     <!-- Categoría -->
     <EditText
         android:id="@+id/etCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Categoría (mamífero, ave, etc.)" />
+        android:hint="Categoría (mamífero, ave, etc.)"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black" />
 
     <!-- Enlace a Wikipedia -->
     <EditText
         android:id="@+id/etWikiLink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enlace a Wikipedia" />
+        android:hint="Enlace a Wikipedia"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black" />
 
     <!-- Nivel de amorosidad -->
     <RatingBar
